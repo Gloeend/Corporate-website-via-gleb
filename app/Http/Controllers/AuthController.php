@@ -34,33 +34,41 @@ class AuthController extends Controller
         UserRole $obUserRole
     )
     {
+        // Если метод запроса не POST, по бизнес логике тут нету передаваемых параметров
+        // поэтому мы возвращаем view(), если ..->method() === POST, работаем дальше
         if ($obRequest->method() !== 'POST') {
             return view('register');
         }
-        if (!($obValidated = $obRequest->validate(
-            [
+
+        // Валидация данных, отправленных с формы
+        $obRequest->validate([
                 'username' => 'unique:users|min:5|max:31',
                 'fn' => 'required|min:2',
                 'ln' => 'required|min:2',
                 'mn' => 'required|min:2',
-                'password' => 'required|min:6|max:63|same:password_repeat',
-                'password_repeat' => 'min:6',
-            ]
-        ))) {
-            return;
-        };
+                'password' => 'required|min:6|max:63',
+            ]);
+
+        // Заполняем модель фио id`шками под поля Имя, Фамилия, Отчество (По сути, тут создается от 1-й модели FIO
+        // так и вплоть до 4-х -- FIO, FirstName, LastName, MiddleName
+        // как работает функция chechExistOrCreate смотреть в трейте CheckExistOrCreate.php
+        // после добавляем строку в бд
         $obFio->fill([
             'id_fn' => $obFirstName->checkExistOrCreate($obRequest->fn)->id,
             'id_ln' => $obLastName->checkExistOrCreate($obRequest->ln)->id,
             'id_mn' => $obMiddleName->checkExistOrCreate($obRequest->mn)->id,
         ])->save();
 
+        // Заполняем модель пользователей
+        // после добавляем строку в бд
         $obUser->fill([
             'username' => $obRequest->username,
             'password' => Hash::make($obRequest->password),
             'id_fio' => $obFio->id,
         ])->save();
 
+        // Заполняем модель пользователей
+        // после добавляем строку в бд
         $obUserRole->fill([
             'id_user' => $obUser->id,
             'id_role' => $obRole->findRoleIdByName('user')

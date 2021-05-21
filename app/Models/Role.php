@@ -14,6 +14,8 @@ class Role extends Model
     protected $table = 'role';
     public $timestamps = true;
 
+
+    // Ищет роль по ее названию и возвращает Id
     public function findRoleIdByName($name)
     {
         if (self::where(['name' => $name])->exists()) {

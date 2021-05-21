@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Validator;
+use Symfony\Component\Console\Input\Input;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +28,7 @@ Route::middleware('guest')->group(function () {
 
     Route::get('register', [AuthController::class, 'register']);
     Route::post('register', [AuthController::class, 'register'])->name('register');
+
 
     Route::post('logout', [AuthController::class, 'logout']);
 
