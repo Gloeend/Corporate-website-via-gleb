@@ -11,7 +11,9 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\UserRole;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redirect;
 
 class AuthController extends Controller
 {
@@ -20,7 +22,14 @@ class AuthController extends Controller
         if ($obRequest->method() !== 'POST') {
             return view('login');
         }
-        return false;
+
+        // Auth::attempt сама находит в бд юзера и все сверяет
+        if (Auth::attempt($obRequest->only('username', 'password'))) {
+            $obRequest->session()->regenerate();
+            return redirect()->intended('/');
+        }
+
+        return \redirect()->back()->withErrors(['Неправильный логин или пароль']);
     }
 
     public function register(
@@ -79,6 +88,6 @@ class AuthController extends Controller
     public function logout()
     {
         $this->logout();
-        return redirect(route('home'));
+        return redirect(route('login'));
     }
 }
