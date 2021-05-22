@@ -60,7 +60,7 @@ class AuthController extends Controller
 
         // Заполняем модель фио id`шками под поля Имя, Фамилия, Отчество (По сути, тут создается от 1-й модели FIO
         // так и вплоть до 4-х -- FIO, FirstName, LastName, MiddleName
-        // как работает функция chechExistOrCreate смотреть в трейте CheckExistOrCreate.php
+        // как работает функция checkExistOrCreate смотреть в трейте CheckExistOrCreate.php
         // после добавляем строку в бд
         $obFio->fill([
             'id_fn' => $obFirstName->checkExistOrCreate($obRequest->fn)->id,

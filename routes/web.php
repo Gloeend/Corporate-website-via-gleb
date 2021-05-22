@@ -33,3 +33,6 @@ Route::middleware('guest')->group(function () {
     Route::get('logout', [AuthController::class, 'logout']);
 
 });
+
+
+Route::get('news', [NewsController::class, 'index'])->name('news');
