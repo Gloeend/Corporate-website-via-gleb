@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\News;
 use app\models\UploadImage;
+use app\models\UserNews;
 use Yii;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
@@ -42,6 +43,7 @@ class NewsController extends \yii\web\Controller
     public function actionCreate()
     {
         $model = new \app\models\News();
+        $userNews = new UserNews();
         $upload = new UploadImage();
         if ($this->request->isGet) {
             return $this->render('create', [
@@ -56,6 +58,9 @@ class NewsController extends \yii\web\Controller
         $upload->image = UploadedFile::getInstance($upload, 'image');
         $model->preview = $upload->upload();
         $model->save();
+        $userNews->id_user = Yii::$app->user->id;
+        $userNews->id_news = $model->id;
+        $userNews->save();
         return $this->redirect('/news/view?id=' . $model->id);
     }
 
